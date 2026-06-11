@@ -1,0 +1,13 @@
+<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lifetime Truegreen logo mark">
+  <!-- White water swoosh -->
+  <path fill="#ffffff" d="M99 10C69 50 46 83 45 123c-1 43 21 78 72 96-25-19-35-44-31-78 4-43 17-79 25-103-3-9-7-17-12-28Z
+           M92 32c-21 39-37 68-37 100 0 30 14 56 49 73-26-22-35-47-33-77 2-36 12-66 21-96Z"/>
+  <!-- White leaf -->
+  <path fill="#ffffff" d="M115 35c33 32 56 71 52 114-3 36-27 57-58 58-6-30-6-61 5-92 7-21 5-50 1-80Z"/>
+  <!-- Teal veins -->
+  <g fill="none" stroke="#0D5B66" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M112 50C111 100 109 150 108 199"/>
+    <path d="M111 84l30-12M110 116l34-9M110 148l30-4"/>
+    <path d="M111 100l-18-6M110 132l-16-3"/>
+  </g>
+</svg>
