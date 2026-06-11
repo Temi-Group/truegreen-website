@@ -59,7 +59,7 @@
         'Service: ' + (data.get('service') || '') + '\n\n' +
         (data.get('message') || '')
       );
-      window.location.href = 'mailto:info@lifetimetruegreen.co.za?subject=' + subject + '&body=' + body;
+      window.location.href = 'mailto:info@truegreen.co.za?subject=' + subject + '&body=' + body;
     });
   }
 })();
