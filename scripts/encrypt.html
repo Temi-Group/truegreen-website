@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Dashboard URL | Lifetime Truegreen (internal tool)</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+  <section style="padding:48px 0">
+    <div class="container" style="max-width:760px">
+      <span class="eyebrow">Internal Tool</span>
+      <h1>Publish the investor dashboard</h1>
+      <p class="lead">Encrypts the dashboard so it can be served from truegreen.co.za. Nothing is uploaded — everything happens in this browser tab.</p>
+
+      <div class="form-card" style="margin-top:28px">
+        <div class="field" id="row-mode" hidden>
+          <label for="mode">What are you publishing?</label>
+          <select id="mode" autocomplete="off">
+            <option value="content">The dashboard page itself (recommended — served from our own site)</option>
+            <option value="url">A link to an external dashboard</option>
+          </select>
+        </div>
+        <div class="field" id="row-file">
+          <label>Dashboard page</label>
+          <p class="form-note" id="fileinfo">Looking for a staged dashboard…</p>
+          <details style="margin-top:8px">
+            <summary style="cursor:pointer;font-size:0.88rem;color:var(--charcoal)">Choose a different file</summary>
+            <input type="file" id="file" accept=".html,.htm" style="margin-top:10px">
+          </details>
+        </div>
+        <div class="field" id="row-url" hidden>
+          <label for="u">Dashboard URL</label>
+          <input type="url" id="u" placeholder="https://...">
+        </div>
+        <div class="field">
+          <label for="p">Shared client password</label>
+          <input type="password" id="p" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="d">Updated date</label>
+          <input type="date" id="d">
+        </div>
+        <button class="btn btn-primary" id="publish" type="button">Publish dashboard</button>
+        <button class="btn btn-ghost" id="go" type="button">Generate only</button>
+        <p class="form-note"><strong>Will write:</strong> <code id="willwrite">data/dashboard-content.json</code></p>
+        <p class="form-note" id="msg"></p>
+      </div>
+
+      <div id="out" hidden style="margin-top:24px">
+        <h3>Save this as <code id="outname">data/dashboard-content.json</code></h3>
+        <textarea id="json" readonly style="width:100%;min-height:260px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.85rem;padding:14px;border:1px solid var(--warm-grey);border-radius:10px"></textarea>
+        <p style="margin-top:12px">
+          <button class="btn btn-primary" id="save" type="button">Save into data/</button>
+          <button class="btn btn-ghost" id="download" type="button">Download instead</button>
+          <button class="btn btn-ghost" id="copy" type="button">Copy JSON</button>
+          <button class="btn btn-ghost" id="verify" type="button">Verify round-trip</button>
+        </p>
+        <p class="form-note" id="vmsg"></p>
+        <p class="form-note">Then: <code>git add data/dashboard.json &amp;&amp; git commit -m "Update client dashboard" &amp;&amp; git push</code></p>
+      </div>
+    </div>
+  </section>
+
+  <script type="module">
+    import { encryptText, decryptText } from '../assets/js/dashboard-crypto.mjs';
+
+    const $ = (id) => document.getElementById(id);
+    $('d').value = new Date().toISOString().slice(0, 10);
+
+    // Allow ?url=... to pre-fill the link field, so the link never has to live
+    // in this repo. It must NOT switch modes: self-hosting is the default, and
+    // silently selecting link mode is an easy way to publish the wrong thing.
+    const preset = new URLSearchParams(location.search).get('url');
+    if (preset) $('u').value = preset;
+
+    // Browsers restore <select> state across reloads, which silently carried a
+    // previous "link" choice into a new session and published the wrong file.
+    // Pin the mode explicitly on every load.
+    // The dropdown is hidden and forced to self-hosted. Browsers restore form
+    // state across reloads, so a stale "link" selection kept publishing the
+    // wrong file; only ?mode=url reveals the chooser now.
+    const wanted = new URLSearchParams(location.search).get('mode');
+    $('mode').value = wanted === 'url' ? 'url' : 'content';
+    if (wanted) $('row-mode').hidden = false;
+    syncMode();
+
+    // Load the dashboard the local server has staged, so there is no file
+    // picker to get wrong. Falls back to the manual chooser if absent.
+    (async () => {
+      try {
+        const r = await fetch('/local-source', { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        plaintext = await r.text();
+        fileName = 'staged dashboard';
+        describe();
+      } catch {
+        $('fileinfo').textContent = 'No staged dashboard found — choose the file below.';
+      }
+    })();
+
+    function describe() {
+      const external = [...plaintext.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map(m => m[1]);
+      $('fileinfo').innerHTML =
+        `<strong>Loaded ${Math.round(plaintext.length / 1024)} KB</strong> — ` +
+        (external.length
+          ? `warning: ${external.length} external reference(s); these may not load once self-hosted.`
+          : 'self-contained, no external references.');
+    }
+
+    // One click: encrypt, verify the round-trip, and write the file.
+    $('publish').addEventListener('click', async () => {
+      $('go').click();
+      await new Promise(r => setTimeout(r, 50));
+      for (let i = 0; i < 200 && !payload; i++) await new Promise(r => setTimeout(r, 100));
+      if (!payload) return;
+      $('verify').click();
+      await new Promise(r => setTimeout(r, 800));
+      $('save').click();
+    });
+
+    let payload = null, plaintext = '', fileName = '';
+
+    function syncMode() {
+      const content = $('mode').value === 'content';
+      $('row-file').hidden = !content;
+      $('row-url').hidden = content;
+      $('outname').textContent = content ? 'data/dashboard-content.json' : 'data/dashboard.json';
+      $('willwrite').textContent = content ? 'data/dashboard-content.json' : 'data/dashboard.json';
+    }
+    $('mode').addEventListener('change', syncMode);
+
+    $('file').addEventListener('change', async () => {
+      const f = $('file').files[0];
+      if (!f) return;
+      plaintext = await f.text();
+      fileName = f.name;
+      describe();
+    });
+
+    $('go').addEventListener('click', async () => {
+      const content = $('mode').value === 'content';
+      const password = $('p').value;
+      if (content) {
+        if (!plaintext) { $('msg').textContent = 'Choose the dashboard HTML file first.'; return; }
+      } else {
+        plaintext = $('u').value.trim();
+        if (!/^https?:\/\//i.test(plaintext)) { $('msg').textContent = 'Enter a valid http(s) URL.'; return; }
+      }
+      if (!password) { $('msg').textContent = 'Enter the shared portal password.'; return; }
+
+      $('msg').textContent = 'Encrypting…';
+      payload = await encryptText(plaintext, password, {
+        updatedAt: $('d').value || null,
+        mode: content ? 'content' : 'url'
+      });
+      $('json').value = JSON.stringify(payload, null, 2);
+      $('out').hidden = false;
+      $('outname').textContent = content ? 'data/dashboard-content.json' : 'data/dashboard.json';
+      $('msg').textContent = content
+        ? `Done — ${Math.round(plaintext.length / 1024)} KB of dashboard encrypted. Nothing readable is left in the file.`
+        : 'Done — the URL is not stored in plaintext anywhere in this file.';
+    });
+
+    // Available only under scripts/serve-local.py, which provides POST /save.
+    $('save').addEventListener('click', async () => {
+      $('vmsg').textContent = 'Saving…';
+      try {
+        const r = await fetch('/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: $('json').value
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const { saved } = await r.json();
+        $('vmsg').textContent = `\u2713 Written to ${saved}. Commit and push it to publish.`;
+      } catch (e) {
+        $('vmsg').textContent =
+          'Could not save automatically (' + e.message + '). Use "Download instead", ' +
+          'then move the file into the repo\'s data/ folder.';
+      }
+    });
+
+    $('download').addEventListener('click', () => {
+      const name = $('mode').value === 'content' ? 'dashboard-content.json' : 'dashboard.json';
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([$('json').value + '\n'], { type: 'application/json' }));
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      $('vmsg').textContent = `Downloaded ${name} — move it into the repo's data/ folder.`;
+    });
+
+    $('copy').addEventListener('click', async () => {
+      await navigator.clipboard.writeText($('json').value);
+      $('vmsg').textContent = 'Copied to clipboard.';
+    });
+
+    $('verify').addEventListener('click', async () => {
+      try {
+        const back = await decryptText(payload, $('p').value);
+        $('vmsg').textContent = back === plaintext
+          ? `\u2713 Decrypts back to exactly the same ${$('mode').value === 'content' ? 'page' : 'URL'} with this password.`
+          : '\u2717 Mismatch — do not use this file.';
+      } catch {
+        $('vmsg').textContent = '\u2717 Could not decrypt — do not use this file.';
+      }
+    });
+  </script>
+</body>
+</html>

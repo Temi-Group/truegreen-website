@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /login.html
+Disallow: /dashboard.html
+Disallow: /data/
+Disallow: /scripts/
 
 Sitemap: https://truegreen.co.za/sitemap.xml

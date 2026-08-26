@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investor Login | Lifetime Truegreen Developments</title>
+  <meta name="description" content="Investor portal login for Lifetime Truegreen Developments.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="assets/img/logo-icon.png">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Lifetime Truegreen home">
+        <img class="mark" src="assets/img/logo-icon.png" alt="">
+        <span class="wordmark">
+          <span class="l1">LIFETIME</span>
+          <span class="l2">TRUEGREEN</span>
+          <span class="l3">DEVELOPMENTS (PTY) LTD</span>
+        </span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="solar.html">Solar &amp; Backup</a></li>
+        <li><a href="water.html">Water Purification</a></li>
+        <li><a href="estates.html">Estate Solutions</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="nav-cta"><a class="btn btn-primary" href="contact.html">Get a Quote</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <section class="portal-login-section">
+    <div class="container">
+      <div class="portal-card">
+        <img class="portal-card-mark" src="assets/img/logo-icon.png" alt="">
+        <span class="eyebrow">Investor Portal</span>
+        <h1>Investor login</h1>
+        <p>Enter the portal password provided by Lifetime Truegreen to open your live investor dashboard.</p>
+
+        <form id="portal-login" method="post" action="login.html" novalidate>
+          <div class="field">
+            <label for="portal-password">Portal password</label>
+            <input type="password" id="portal-password" name="password"
+                   autocomplete="current-password" autocapitalize="off"
+                   autocorrect="off" spellcheck="false" required>
+          </div>
+          <p class="portal-error" id="portal-error" role="alert" hidden></p>
+          <button class="btn btn-primary portal-submit" type="submit" disabled>Open Dashboard</button>
+        </form>
+
+        <script>
+          /* portal.js is an ES module, so it is deferred. Until it has wired up
+             the form, block native submission: a plain submit would send the
+             password to the server and leave it in browser history. */
+          (function () {
+            var f = document.getElementById('portal-login');
+            if (f) f.addEventListener('submit', function (e) { e.preventDefault(); });
+          })();
+        </script>
+
+        <p class="portal-help">
+          Don't have the password? Call <a href="tel:+27113910134">+27 11 391 0134</a>
+          or email <a href="mailto:info@truegreen.co.za">info@truegreen.co.za</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:0">
+        <div>© <span data-year>2026</span> Lifetime Truegreen Developments (Pty) Ltd · Reg 1994/008054/07</div>
+        <div><a href="index.html">Back to website</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/portal.js"></script>
+</body>
+</html>

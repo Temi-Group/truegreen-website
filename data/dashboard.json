@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "configured": true,
+  "kdf": "PBKDF2-SHA256",
+  "iterations": 310000,
+  "alg": "AES-GCM",
+  "salt": "AvrqoPxUW1TTrO2d1I8nBw==",
+  "iv": "DWy/lf3igSSueMmR",
+  "ciphertext": "j48Xnbefqyk7BBhbOzqMZoUTiNcS5FOEvYbakv4U+a+G2BLruHb/K9f8n5tkcZzYeSWHFAD02FFLpbY1u7pozbpFs/b5FOnghzRDAoSBWgOgqeLR",
+  "updatedAt": "2026-08-26",
+  "mode": "url"
+}

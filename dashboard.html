@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investor Dashboard | Lifetime Truegreen Developments</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="assets/img/logo-icon.png">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="portal-body">
+
+  <div class="portal-shell" id="portal-shell">
+
+    <header class="portal-bar">
+      <a class="portal-bar-brand" href="index.html" aria-label="Lifetime Truegreen home">
+        <img src="assets/img/logo-white-horizontal.png" alt="Lifetime Truegreen Developments">
+      </a>
+      <div class="portal-bar-title">
+        <span class="portal-bar-label">Investor Dashboard</span>
+        <span class="portal-bar-updated" id="portal-updated" hidden></span>
+      </div>
+      <div class="portal-bar-actions">
+        <a class="btn btn-outline btn-sm" data-open-dashboard href="#" target="_blank" rel="noopener noreferrer" hidden>Open in New Tab</a>
+        <a class="portal-trouble" id="portal-trouble" href="#">Not loading?</a>
+        <a class="portal-logout" id="portal-logout" href="login.html">Log out</a>
+      </div>
+    </header>
+
+    <main class="portal-stage">
+      <iframe
+        id="portal-frame"
+        class="portal-frame"
+        title="Lifetime Truegreen investor dashboard"
+        allow="fullscreen; clipboard-write"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-modals allow-downloads"></iframe>
+
+      <div class="portal-fallback" id="portal-fallback" hidden>
+        <div class="portal-fallback-card">
+          <img class="portal-card-mark" src="assets/img/logo-icon.png" alt="">
+          <span class="eyebrow">Investor Portal</span>
+          <h2>Your dashboard is ready</h2>
+          <p>Your live investor dashboard opens in a new tab. Keep this tab open — you can return here any time to reopen it, or log out when you're done.</p>
+          <a class="btn btn-primary" data-open-dashboard href="#" target="_blank" rel="noopener noreferrer">Open Dashboard</a>
+          <p class="portal-help">Didn't open? Check your pop-up blocker, or call <a href="tel:+27113910134">+27 11 391 0134</a>.</p>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <script type="module" src="assets/js/portal.js"></script>
+</body>
+</html>
